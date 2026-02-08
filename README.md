@@ -103,7 +103,7 @@ textField.font = .ttf("Silkscreen-Regular.ttf", size: 16)
 
 ## Credits
 
-Primarily the work of Simon Whitty, leaning heavily on [Claude Opus 4.5](https://www.anthropic.com/claude/opus), [google/woff2](https://github.com/google/woff2), and [nicksay-js-woff2](https://github.com/nicksay/nicksay-js-woff2).
+Primarily the work of Simon Whitty, leaning heavily on [Claude Opus 4.5](https://www.anthropic.com/claude/opus), [google/woff2](https://github.com/google/woff2), and [fontkit](https://github.com/foliojs/fontkit).
 
 ## License
 
