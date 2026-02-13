@@ -129,14 +129,14 @@ struct WOFF2Tests {
     @Test
     func `generates font preview PDF`() throws {
         let woff2Fonts: [(filename: String, displayName: String)] = [
-            ("Inter-Regular.woff2", "Inter"),
-            ("Roboto-Regular.woff2", "Roboto"),
-            ("Lato-Regular.woff2", "Lato"),
-            ("EBGaramond-Regular.woff2", "EB Garamond"),
             ("Barrio-Regular.woff2", "Barrio"),
+            ("EBGaramond-Regular.woff2", "EB Garamond"),
+            ("Inter-Regular.woff2", "Inter"),
+
             ("PlaywriteUSTradGuides-Regular.woff2", "Playwrite US Trad"),
-            ("SourceCodePro-Regular.woff2", "Source Code Pro"),
+            ("Roboto-Regular.woff2", "Roboto"),
             ("Silkscreen-Regular.woff2", "Silkscreen"),
+            ("SourceCodePro-Regular.woff2", "Source Code Pro"),
             ("VT323-Regular.woff2", "VT323")
         ]
 
@@ -145,23 +145,26 @@ struct WOFF2Tests {
         try? FileManager.default.removeItem(at: outputDir)
         try FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true)
 
-        // Build font entries with measured widths
-        var fontEntries: [(displayName: String, ctFont: CTFont, textWidth: CGFloat)] = []
+        // Build font entries with measured dimensions
+        var fontEntries: [(displayName: String, ctFont: CTFont, textWidth: CGFloat, rowHeight: CGFloat)] = []
         for (filename, displayName) in woff2Fonts {
             let woff2 = try WOFF2(contentsOf: Bundle.test.url(forResource: filename))
             let cgFont = try woff2.makeCGFont()
             let ctFont = CTFontCreateWithGraphicsFont(cgFont, 48, nil, nil)
             let textWidth = measureTextWidth(text: sampleText, font: ctFont)
-            fontEntries.append((displayName, ctFont, textWidth))
+            let ascent = CTFontGetAscent(ctFont)
+            let descent = CTFontGetDescent(ctFont)
+            let rowHeight = max(ascent + descent + 30, 80)
+            fontEntries.append((displayName, ctFont, textWidth, rowHeight))
         }
 
-        // Calculate page size based on widest text
+        // Calculate page size based on widest text and total height
         let maxTextWidth = fontEntries.map(\.textWidth).max() ?? 500
         let margin: CGFloat = 40
         let topPadding: CGFloat = 30
-        let rowHeight: CGFloat = 100
+        let totalRowHeight = fontEntries.map(\.rowHeight).reduce(0, +)
         let pageWidth = ceil(maxTextWidth) + margin * 2
-        let pageHeight = CGFloat(fontEntries.count) * rowHeight + margin + topPadding
+        let pageHeight = totalRowHeight + margin + topPadding
 
         let outputURL = outputDir.appendingPathComponent("FontPreviews.pdf")
         let pdfData = NSMutableData()
@@ -182,28 +185,32 @@ struct WOFF2Tests {
         let blackColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
         let labelFont = CTFontCreateWithName("Helvetica" as CFString, 12, nil)
 
-        for (index, entry) in fontEntries.enumerated() {
-            let rowTop = pageHeight - topPadding - CGFloat(index) * rowHeight
+        var yOffset = pageHeight - topPadding
+        for entry in fontEntries {
+            let descent = CTFontGetDescent(entry.ctFont)
+            let baseline = yOffset - entry.rowHeight + descent + 20
 
-            // Draw font name label (at top of row)
-            let labelAttributes: [CFString: Any] = [
-                kCTFontAttributeName: labelFont,
-                kCTForegroundColorAttributeName: grayColor
-            ]
-            let labelString = CFAttributedStringCreate(nil, entry.displayName as CFString, labelAttributes as CFDictionary)!
-            let labelLine = CTLineCreateWithAttributedString(labelString)
-            pdfContext.textPosition = CGPoint(x: margin, y: rowTop - 20)
-            CTLineDraw(labelLine, pdfContext)
-
-            // Draw sample text (below label)
+            // Draw sample text
             let sampleAttributes: [CFString: Any] = [
                 kCTFontAttributeName: entry.ctFont,
                 kCTForegroundColorAttributeName: blackColor
             ]
             let sampleString = CFAttributedStringCreate(nil, sampleText as CFString, sampleAttributes as CFDictionary)!
             let sampleLine = CTLineCreateWithAttributedString(sampleString)
-            pdfContext.textPosition = CGPoint(x: margin, y: rowTop - 75)
+            pdfContext.textPosition = CGPoint(x: margin, y: baseline)
             CTLineDraw(sampleLine, pdfContext)
+
+            // Draw font name label (below sample text)
+            let labelAttributes: [CFString: Any] = [
+                kCTFontAttributeName: labelFont,
+                kCTForegroundColorAttributeName: grayColor
+            ]
+            let labelString = CFAttributedStringCreate(nil, entry.displayName as CFString, labelAttributes as CFDictionary)!
+            let labelLine = CTLineCreateWithAttributedString(labelString)
+            pdfContext.textPosition = CGPoint(x: margin, y: baseline - descent - 16)
+            CTLineDraw(labelLine, pdfContext)
+
+            yOffset -= entry.rowHeight
         }
 
         pdfContext.endPDFPage()
