@@ -213,11 +213,12 @@ extension Font {
     private static func loadAndRegister<T: FontDataProvider>(
         name: String,
         bundle: Bundle,
-        loader: (URL) throws -> T
+        loader: (Data) throws -> T
     ) -> String? {
         FontCache.shared.postScriptName(forResource: name, in: bundle) {
             guard let url = bundle.url(forResource: name, withExtension: nil),
-                  let font = try? loader(url),
+                  let data = try? Data(contentsOf: url),
+                  let font = try? loader(data),
                   let cgFont = try? font.makeCGFont() else {
                 return nil
             }
