@@ -1,3 +1,9 @@
+[![Build](https://github.com/swhitty/swift-woff2/actions/workflows/build.yml/badge.svg)](https://github.com/swhitty/swift-woff2/actions/workflows/build.yml)
+[![Codecov](https://codecov.io/gh/swhitty/swift-woff2/graphs/badge.svg)](https://codecov.io/gh/swhitty/swift-woff2)
+[![Platforms](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswhitty%2Fswift-woff2%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/swhitty/swift-woff2)
+[![Swift 6.0](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswhitty%2Fswift-woff2%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/swhitty/swift-woff2)
+
+
 # swift-woff2
 
 A native Swift library for decoding WOFF2, WOFF, TTF, and OTF font files.
