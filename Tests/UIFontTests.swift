@@ -38,7 +38,7 @@ struct UIFontTests {
 
     @Test
     func `loads WOFF2 font`() {
-        let font = UIFont.woff2("Roboto-Regular.woff2", size: 16, in: .test)
+        let font = UIFont(filename: "Roboto-Regular.woff2", size: 16, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "RobotoRegular")
@@ -47,7 +47,7 @@ struct UIFontTests {
 
     @Test
     func `loads WOFF font`() {
-        let font = UIFont.woff("Roboto-Regular.woff", size: 14, in: .test)
+        let font = UIFont(filename: "Roboto-Regular.woff", size: 14, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "Roboto-Regular")
@@ -56,7 +56,7 @@ struct UIFontTests {
 
     @Test
     func `loads TTF font`() {
-        let font = UIFont.ttf("Roboto-Regular.ttf", size: 12, in: .test)
+        let font = UIFont(filename: "Roboto-Regular.ttf", size: 12, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "RobotoRegular")
@@ -64,30 +64,16 @@ struct UIFontTests {
     }
 
     @Test
-    func `loads WOFF2 font with Dynamic Type`() {
-        let font = UIFont.woff2("Roboto-Regular.woff2", size: 16, relativeTo: .body, in: .test)
+    func `loads font with Dynamic Type`() {
+        let font = UIFont.scaledFont(filename: "Roboto-Regular.woff2", size: 16, relativeTo: .body, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "RobotoRegular")
     }
 
     @Test
-    func `returns nil for missing WOFF2`() {
-        let font = UIFont.woff2("Missing.woff2", size: 16, in: .test)
-
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing WOFF`() {
-        let font = UIFont.woff("Missing.woff", size: 16, in: .test)
-
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing TTF`() {
-        let font = UIFont.ttf("Missing.ttf", size: 16, in: .test)
+    func `returns nil for missing font`() {
+        let font = UIFont(filename: "Missing.woff2", size: 16, in: .test)
 
         #expect(font == nil)
     }

@@ -39,7 +39,7 @@ struct FontTests {
     @Test
     func `loads WOFF2 font with relativeTo`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff2("Roboto-Regular.woff2", size: 16, relativeTo: .body, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.woff2", size: 16, relativeTo: .body, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 16))
     }
@@ -47,7 +47,7 @@ struct FontTests {
     @Test
     func `loads WOFF2 font with fixedSize`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff2("Roboto-Regular.woff2", fixedSize: 24, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.woff2", fixedSize: 24, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 24))
     }
@@ -55,7 +55,7 @@ struct FontTests {
     @Test
     func `loads WOFF font with relativeTo`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff("Roboto-Regular.woff", size: 14, relativeTo: .body, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.woff", size: 14, relativeTo: .body, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 14))
     }
@@ -63,7 +63,7 @@ struct FontTests {
     @Test
     func `loads WOFF font with fixedSize`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff("Roboto-Regular.woff", fixedSize: 18, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.woff", fixedSize: 18, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 18))
     }
@@ -71,7 +71,7 @@ struct FontTests {
     @Test
     func `loads TTF font with relativeTo`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.ttf("Roboto-Regular.ttf", size: 12, relativeTo: .body, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.ttf", size: 12, relativeTo: .body, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 12))
     }
@@ -79,29 +79,15 @@ struct FontTests {
     @Test
     func `loads TTF font with fixedSize`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.ttf("Roboto-Regular.ttf", fixedSize: 20, in: .test)
+        let font = Font.custom(filename: "Roboto-Regular.ttf", fixedSize: 20, in: .test)
         #expect(font != nil)
         #expect(font != Font.system(size: 20))
     }
 
     @Test
-    func `returns nil for missing WOFF2`() {
+    func `returns nil for missing font`() {
         guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff2("Missing.woff2", size: 16, in: .test)
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing WOFF`() {
-        guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.woff("Missing.woff", size: 16, in: .test)
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing TTF`() {
-        guard #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) else { return }
-        let font = Font.ttf("Missing.ttf", size: 16, in: .test)
+        let font = Font.custom(filename: "Missing.woff2", size: 16, in: .test)
         #expect(font == nil)
     }
 }

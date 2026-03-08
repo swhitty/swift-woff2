@@ -38,7 +38,7 @@ struct NSFontTests {
 
     @Test
     func `loads WOFF2 font`() {
-        let font = NSFont.woff2("Roboto-Regular.woff2", size: 16, in: .test)
+        let font = NSFont(filename: "Roboto-Regular.woff2", size: 16, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "RobotoRegular")
@@ -47,7 +47,7 @@ struct NSFontTests {
 
     @Test
     func `loads WOFF font`() {
-        let font = NSFont.woff("Roboto-Regular.woff", size: 14, in: .test)
+        let font = NSFont(filename: "Roboto-Regular.woff", size: 14, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "Roboto-Regular")
@@ -56,7 +56,7 @@ struct NSFontTests {
 
     @Test
     func `loads TTF font`() {
-        let font = NSFont.ttf("Roboto-Regular.ttf", size: 12, in: .test)
+        let font = NSFont(filename: "Roboto-Regular.ttf", size: 12, in: .test)
 
         #expect(font != nil)
         #expect(font?.fontName == "RobotoRegular")
@@ -64,22 +64,8 @@ struct NSFontTests {
     }
 
     @Test
-    func `returns nil for missing WOFF2`() {
-        let font = NSFont.woff2("Missing.woff2", size: 16, in: .test)
-
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing WOFF`() {
-        let font = NSFont.woff("Missing.woff", size: 16, in: .test)
-
-        #expect(font == nil)
-    }
-
-    @Test
-    func `returns nil for missing TTF`() {
-        let font = NSFont.ttf("Missing.ttf", size: 16, in: .test)
+    func `returns nil for missing font`() {
+        let font = NSFont(filename: "Missing.woff2", size: 16, in: .test)
 
         #expect(font == nil)
     }

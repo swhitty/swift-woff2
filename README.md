@@ -23,11 +23,13 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swhitty/swift-woff2.git", from: "0.1.0")
+    .package(url: "https://github.com/swhitty/swift-woff2.git", from: "0.2.0")
 ]
 ```
 
 ## Usage
+
+The font format is auto-detected from the file contents, so the same API works for WOFF2, WOFF, TTF, and OTF files.
 
 ### SwiftUI
 
@@ -40,33 +42,22 @@ import WOFF2
 struct ContentView: View {
     var body: some View {
         Text("Hello, World!")
-            .font(.woff2("Silkscreen-Regular.woff2", size: 16))
+            .font(.custom(filename: "Silkscreen-Regular.woff2", size: 16))
     }
 }
-
-// With Dynamic Type scaling
-Text("Hello, World!")
-    .font(.woff2("Silkscreen-Regular.woff2", size: 17, relativeTo: .body))
 ```
 
 Load a font from `Data` (e.g., downloaded from a server):
 
 ```swift
-import SwiftUI
-import WOFF2
+let (data, _) = try await URLSession.shared.data(from: fontURL)
 
-struct ContentView: View {
-    @State private var font: Font?
+Text("Hello, World!")
+    .font(.custom(data: data, size: 24))
 
-    var body: some View {
-        Text("Hello, World!")
-            .font(font)
-            .task {
-                let (data, _) = try await URLSession.shared.data(from: fontURL)
-                font = .woff2(data: data, size: 24)
-            }
-    }
-}
+// With a fixed size (does not scale with Dynamic Type)
+Text("Hello, World!")
+    .font(.custom(data: data, fixedSize: 24))
 ```
 
 ### UIKit
@@ -75,10 +66,14 @@ struct ContentView: View {
 import UIKit
 import WOFF2
 
-label.font = .woff2("Silkscreen-Regular.woff2", size: 16)
+label.font = UIFont(filename: "Silkscreen-Regular.woff2", size: 16)
 
 // With Dynamic Type scaling
-label.font = .woff2("Silkscreen-Regular.woff2", size: 17, relativeTo: .body)
+label.font = .scaledFont(filename: "Silkscreen-Regular.woff2", size: 17, relativeTo: .body)
+
+// From Data
+label.font = UIFont(data: fontData, size: 16)
+label.font = .scaledFont(data: fontData, size: 17, relativeTo: .body)
 ```
 
 ### AppKit
@@ -87,9 +82,10 @@ label.font = .woff2("Silkscreen-Regular.woff2", size: 17, relativeTo: .body)
 import AppKit
 import WOFF2
 
-textField.font = .woff2("Silkscreen-Regular.woff2", size: 16)
-textField.font = .woff("Silkscreen-Regular.woff", size: 16)
-textField.font = .ttf("Silkscreen-Regular.ttf", size: 16)
+textField.font = NSFont(filename: "Silkscreen-Regular.woff2", size: 16)
+
+// From Data
+textField.font = NSFont(data: fontData, size: 16)
 ```
 
 ## Supported Formats
@@ -105,7 +101,6 @@ textField.font = .ttf("Silkscreen-Regular.ttf", size: 16)
 
 - WOFF2 glyf/loca transform is implemented for TrueType outlines only
 - CFF/CFF2 (PostScript) outline transforms are not yet supported
-- Variable font tables (gvar, fvar) are passed through without special handling
 
 ## Credits
 
